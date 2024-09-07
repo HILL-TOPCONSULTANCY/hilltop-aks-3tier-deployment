@@ -67,12 +67,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   network_profile {
     network_plugin    = "azure"
-    service_cidr      = "10.1.0.0/16"   # Ensure this doesn't overlap with VNet or subnets
-    dns_service_ip    = "10.1.0.10"     # Ensure this IP is within the service_cidr range
+    service_cidr      = "10.1.0.0/16"  
+    dns_service_ip    = "10.1.0.10"     
   }
 }
 
-# Output the AKS credentials for use with kubectl
+# Output the AKS credentials
 output "kube_config" {
   value     = azurerm_kubernetes_cluster.aks.kube_config_raw
   sensitive = true
