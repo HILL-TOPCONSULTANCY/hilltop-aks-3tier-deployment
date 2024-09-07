@@ -4,7 +4,7 @@ metadata:
   name: {{ include "backend.fullname" . }}
   labels:
     app.kubernetes.io/name: {{ include "backend.name" . }}
-    app.kubernetes.io/version: {{ .Chart.Version | quote }}  # Ensure version is a string
+    app.kubernetes.io/version: "{{ .Chart.Version | default "1.0.0" }}"  # Ensure version is a string
     {{- include "backend.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -15,7 +15,7 @@ spec:
     metadata:
       labels:
         app: {{ include "backend.name" . }}
-        app.kubernetes.io/version: {{ .Chart.Version | quote }}  # Ensure version is a string
+        app.kubernetes.io/version: "{{ .Chart.Version | default "1.0.0" }}"  # Ensure version is a string
         {{- include "backend.labels" . | nindent 8 }}
     spec:
       containers:
