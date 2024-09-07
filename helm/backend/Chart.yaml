@@ -1,4 +1,4 @@
 apiVersion: v2
 name: backend
 description: A Helm chart for backend services
-version: 1.0.0
+version: "1.0.0"  # Version must be a string
