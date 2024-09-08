@@ -88,7 +88,6 @@ az aks get-credentials --resource-group my-aks-resource-group --name aks-cluster
 kubectl get nodes
 ```
 
-You should see your AKS cluster nodes listed.
 ---
 ## APPLICATIONS DEPLOYMENT
 ---
@@ -136,7 +135,7 @@ helm create mongo
 helm install argocd argo/argo-cd -f values.yaml -n argocd
 ```
 
--The Applications can also be deployed manually with helm commands
+- The Applications can also be deployed manually with helm commands
 ```sh
 az aks get-credentials --resource-group aks-resource-group --name aks-cluster
 kubectl get nodes
@@ -151,7 +150,7 @@ helm upgrade --install frontend ./frontend -f values.yaml -n azure
 
 ```
 ---
-## LOGGING
+## APPLICATION LOGGING
 ---
 - If Mongo is running
 ```sh
@@ -174,9 +173,7 @@ kubectl exec -it $(kubectl get pod -l app=backend -n azure -o jsonpath="{.items[
 
 #### **1. Data Management:**
 - **MongoDB Storage:**
-  - In the current setup, MongoDB is deployed using a StatefulSet with Persistent Volume Claims (PVC). 
-  - This ensures that data is stored persistently across pod restarts or failures.
-  - The data is stored on the Azure Kubernetes Service (AKS) persistent storage, ensuring durability.
+  - MongoDB is deployed using a StatefulSet with Persistent Volume Claims (PVC) ensuring data is stored persistently across pod restarts or failures.
 
 **Lapses:**
   - **Sensitive Data in Plain Text:** The MongoDB credentials are stored directly in the Helm chart configuration files, which exposes the application to security risks.
@@ -201,26 +198,10 @@ kubectl exec -it $(kubectl get pod -l app=backend -n azure -o jsonpath="{.items[
   
 **Improvement:**
   - **mTLS (Mutual TLS):** Enable mTLS between services to ensure encrypted communication within the cluster. This would prevent internal man-in-the-middle attacks.
-  - **Network Policies:** Introduce network policies to explicitly define which services can communicate, restricting traffic between backend, frontend, and MongoDB.
 
 ---
 
-#### **3. High Availability:**
-- **Backend and MongoDB Replicas:**
-  - The current setup uses a single replica for MongoDB and the backend, meaning they are single points of failure.
-  - **Frontend Service with Load Balancer:** The frontend uses a Load Balancer service that can distribute traffic, providing high availability at the traffic level.
-
-**Lapses:**
-  - **No Redundancy:** Having only one replica for the backend and MongoDB results in no failover capability if a node or pod crashes.
-  
-**Improvement:**
-  - **Increase Replicas:** Deploy multiple replicas of both the backend and MongoDB StatefulSets for redundancy. This enhances high availability.
-  - **Pod Disruption Budgets:** Use Pod Disruption Budgets to ensure that a minimum number of pods are always running during maintenance or upgrades.
-  - **Autoscaling:** Implement Horizontal Pod Autoscaling (HPA) for the frontend to handle varying traffic levels.
-
----
-
-#### **4. Sensitive Data Management:**
+#### **3. Sensitive Data Management:**
 - **Plain Text Credentials:**
   - MongoDB credentials are stored as plaintext in the configuration files, which poses a significant security risk.
 
@@ -233,7 +214,7 @@ kubectl exec -it $(kubectl get pod -l app=backend -n azure -o jsonpath="{.items[
 
 ---
 
-### **5. Deployment Strategy and Scalability:**
+### **4. Deployment Strategy and Scalability:**
 
 1. **Backend Deployment:**
    - The backend is deployed as a Deployment object. This allows for easy scaling of replicas.
@@ -249,7 +230,7 @@ kubectl exec -it $(kubectl get pod -l app=backend -n azure -o jsonpath="{.items[
 
 ---
 
-#### **6. ArgoCD Integration:**
+#### **5. ArgoCD Integration:**
 - **Continuous Deployment:**
   - ArgoCD is used to manage the continuous deployment of the application. It ensures that the application's desired state (as defined in the Git repository) is always reflected in the Kubernetes cluster.
   
