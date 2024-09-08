@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/HILL-TOPCONSULTANCY/terris.git'
+    repoURL: 'https://github.com/Terriss-mba/origenai.git'
     targetRevision: main
     path: helm/backend
   destination:

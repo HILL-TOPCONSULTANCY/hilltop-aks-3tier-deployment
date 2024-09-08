@@ -3,9 +3,9 @@ provider "azurerm" {
   subscription_id = "261958fe-9b76-4098-92a4-83ffc09f336d"
 }
 
-# Resource group definition
+# # Resource group definition
 resource "azurerm_resource_group" "rg" {
-  name     = "my-aks-resource-group"
+  name     = "aks-resource-group"
   location = "West Europe"
 }
 

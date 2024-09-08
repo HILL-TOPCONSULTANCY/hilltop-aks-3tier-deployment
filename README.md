@@ -32,11 +32,11 @@ This project aims to deploy a web application with frontend, backend, and MongoD
 ### Setup Instructions for Deploying the Application on AKS
 - Clone the Repository to your local
 ```sh
-git clone https://github.com/HILL-TOPCONSULTANCY/terris.git
+git clone https://github.com/Terriss-mba/origenai.git
 ```
 
 #### **Step 1: Login to Azure**
-- First, login to your Azure account via the command line.
+- First, login to your Azure account via the command line. Select the subscription ID as 1
 
 ```sh
 az login
@@ -79,7 +79,7 @@ terraform apply -auto-approve
 - Once the cluster is up and running, configure `kubectl` to securely access the cluster:
 
 ```sh
-az aks get-credentials --resource-group my-aks-resource-group --name aks-cluster
+az aks get-credentials --resource-group aks-resource-group --name aks-cluster
 ```
 
 - Verify that your Kubernetes cluster is running:
@@ -92,7 +92,7 @@ kubectl get nodes
 ## APPLICATIONS DEPLOYMENT
 ---
 #### **Step 5: Install ArgoCD**
-- Deploy ArgoCD into your Kubernetes cluster:
+- Create and argocd namespace and Deploy ArgoCD into your Kubernetes cluster:
 
 ```sh
 kubectl create namespace argocd
@@ -101,8 +101,8 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/st
 ```
 - Create the argocd helm charts and configure the argocd applications
 ```sh
-helm create argcd
-helm install argocd argo/argo-cd -f values.yaml -n argocd
+helm create argocd
+helm install argocd argo/argocd -f values.yaml -n argocd
 ```
 - Change the argocd-server service type to LoadBalancer inorder to access it externally
 
@@ -119,7 +119,8 @@ kubectl get secret argocd-initial-admin-secret -n argocd -o jsonpath="{.data.pas
 ```sh
 kubectl get svc argocd-server -n argocd
 ```
-- Connect the argocd server using the Loadbalancer External_IP ans use 'admin' and the default username and the password
+- (https://argocd-server-ip)
+- Connect the argocd server using the Loadbalancer External_IP and use 'admin' as the default username and the password from the command output
 
 #### **Step 6: Deploy Application Components Using ArgoCD and Helm**
 - In the helm directory, create three helm charts for the 3 tires
@@ -132,42 +133,53 @@ helm create mongo
 - The Applications can be deployed using argocd helm charts:
 - On the ArgoCD server, create the Repository and add the ssh keys to authenticate
 ```sh
-helm install argocd argo/argo-cd -f values.yaml -n argocd
+helm install argocd argo/argocd -f values.yaml -n argocd
 ```
 
 - The Applications can also be deployed manually with helm commands
+- Create a namespace to deploy the application called 'azure' and change context to it
+
 ```sh
-az aks get-credentials --resource-group aks-resource-group --name aks-cluster
-kubectl get nodes
+cd helm
+helm upgrade --install mongo ./mongo -f mongo/values.yaml
+```
+
+```sh
+cd helm
+helm upgrade --install backend ./backend -f backend/values.yaml -n azure
 ```
 ```sh
-cd helm/backend
-helm upgrade --install backend ./backend -f values.yaml -n azure
-```
-```sh
-cd helm/frontend
-helm upgrade --install frontend ./frontend -f values.yaml -n azure
+cd helm
+helm upgrade --install frontend ./frontend -f frontend/values.yaml -n azure
 
 ```
 ---
 ## APPLICATION LOGGING
 ---
-- If Mongo is running
+- If Mongo is running: replace with the name of the mongodb pod by running "kubectl get pods"
 ```sh
-k logs -f <mongodb_pod>
+kubectl logs -f <mongodb_pod_name>
 ```
 - If frontend is running
 ```sh
-k logs -f <frontend_pod>
+kubectl logs -f <frontend_pod_name>
 ```
 - If backend is running
 ```sh
-k logs -f <backend_pod>
+kubectl logs -f <backend_pod_name>
 ```
 - To check if Backend can connect to MongoDB run the command
 ```sh
 kubectl exec -it $(kubectl get pod -l app=backend -n azure -o jsonpath="{.items[0].metadata.name}") -n azure -- env | grep MONGO
 ```
+## ACCESSING THE APPLICATION UI
+- run this command to get the frontend service External Ip address
+```sh
+kubectl get svc
+```
+- access the application on 
+```sh
+<frontend-externalIP:3000>
 ---
 # **SETUP CONSIDERATIONS:**
 
