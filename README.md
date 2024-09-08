@@ -177,8 +177,8 @@ kubectl exec -it $(kubectl get pod -l app=backend -n azure -o jsonpath="{.items[
 ```sh
 kubectl get svc
 ```
-- access the application on 
-```sh
+- access the application on
+  
 <frontend-externalIP:3000>
 ---
 # **SETUP CONSIDERATIONS:**
